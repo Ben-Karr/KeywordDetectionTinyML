@@ -286,3 +286,67 @@ class KeywordDataset(tf.keras.utils.Sequence):
             audiomentations.AddGaussianNoise(max_amplitude=0.005, p=0.3),
         ])
         return augs
+
+## Functional API: does work!
+def create_model(arch, n_labels, meta_dict, dropout = 0.5):
+    """
+    Implements `tiny_conv` and `tiny_embedding_conv` from tensorflow/speech_commands/models.py
+    as well as a slightly larger, still `small` conv net
+    """
+    fingerprint_size = meta_dict['audio']['fingerprint_size']
+    spectrogram_length = meta_dict['audio']['spectrogram_lenght']
+    feature_bin_count = meta_dict['audio']['feature_bin_count']
+    
+    inputs = tf.keras.Input(shape = (fingerprint_size,))
+    x = tf.keras.layers.Reshape(target_shape = [-1, spectrogram_length, feature_bin_count, 1])(inputs)
+    if arch == 'tiny_conv':
+        """ Returns the same model as create_tiny_conv_model """
+        x = tf.keras.layers.Conv2D(filters = 8, 
+                                   kernel_size = (8, 10), 
+                                   strides = (2, 2), 
+                                   padding = 'same', 
+                                   activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(dropout)(x)
+                
+    if arch == 'tiny_embedding_conv':
+        """ Returns the same model as create_tiny_embedding_conv_model """
+        x = tf.keras.layers.Conv2D(filters = 8,
+                                  kernel_size = (8,10),
+                                  strides = (2, 2),
+                                  padding = 'same',
+                                  activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(dropout)(x)
+        x = tf.keras.layers.Conv2D(filters = 8,
+                                  kernel_size = (8,10),
+                                  strides = (8,8),
+                                  padding = 'same',
+                                  activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(dropout)(x)
+        
+    if arch == 'small_conv':
+        """ Add a 'same size' convolution then downsample"""
+        x = tf.keras.layers.Conv2D(filters = 16,
+                                   kernel_size = (3,5),
+                                   strides = (1,1),
+                                   padding = 'same',
+                                   activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(dropout)(x)
+        x = tf.keras.layers.Conv2D(filters = 8, 
+                                   kernel_size = (8, 10), 
+                                   strides = (2, 2), 
+                                   padding = 'same', 
+                                   activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(dropout)(x)
+        
+    x = tf.keras.layers.Flatten()(x)    
+    out = tf.keras.layers.Dense(n_labels, activation = 'softmax')(x)
+    return tf.keras.Model(inputs = inputs, outputs = out)
+
+def get_model(n_labels, meta_dict, arch = 'tiny_conv', dropout = 0.5, pretrain_path = False):
+    ## When loading from pretrained model, remove the last, dense layer and replace by Dense layer with `n_labels` output nodes
+    if pretrain_path:
+        model = tf.keras.models.load_model(pretrain_path)
+        model.trainable = False ## Freezes the embedding layers
+        output = tf.keras.layers.Dense(n_labels, activation = 'softmax')(model.layers[-2].output)
+        return tf.keras.Model(inputs = model.input, outputs = output)
+    return create_model(arch, n_labels, meta_dict, dropout = 0.5)
