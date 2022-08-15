@@ -20,7 +20,7 @@ def get_meta(meta_dict={}, **kwargs):
         them as a dict. Function throws an error if the same keyword is passed more than once to make sure that the 
         intended value is used. Defaul values are from https://colab.research.google.com/github/tinyMLx/colabs/blob/master/4-6-8-CustomDatasetKWSModel.ipynb
     """
-    merged_meta =  meta_dict | kwargs
+    merged_meta =  {**meta_dict, kwargs}
     assert len(merged_meta) == len(meta_dict) + len(kwargs), "It appears that a key was set more than once."
     
     training, audio, augments = {}, {}, {}
