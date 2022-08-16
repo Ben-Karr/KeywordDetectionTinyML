@@ -68,7 +68,7 @@ def calc_unknown_silent_n(n, p_s, p_u):
     n_u = (p_u * (n+n_s)/(1-p_u))
     return math.ceil(round(n_s, 3)), math.ceil(round(n_u, 3))
 
-def get_fns(path, wanted_words, excluded_words = [], val_pct = 0.2, silent_pct = 0.2, unknown_pct = 0.2, seed = None):
+def get_fns(path, wanted_words, excluded_words = [], desired_samples = 16_000, val_pct = 0.2, silent_pct = 0.2, unknown_pct = 0.2, seed = None):
     """
     path:           Where to search for *.wav files
     wanted_words:   The keywords that should be detected
@@ -85,6 +85,10 @@ def get_fns(path, wanted_words, excluded_words = [], val_pct = 0.2, silent_pct =
     wavs = glob.glob(os.path.join(path,'*','*.wav'))
     for fn in wavs:
         folder = os.path.split(os.path.dirname(fn))[-1]
+        try: ## excepts if the audio file has a different number of samples as `desired_samples`
+            tf.audio.decode_wav(contents = tf.io.read_file(fn), desired_channels = 1, desired_samples = desired_samples)
+        except:
+            continue
         if folder in excluded_words:
             continue
         if folder == '_background_noise_':
