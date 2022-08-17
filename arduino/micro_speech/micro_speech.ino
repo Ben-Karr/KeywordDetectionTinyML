@@ -42,7 +42,7 @@ int32_t previous_time = 0;
 // Create an area of memory to use for input, output, and intermediate arrays.
 // The size of this will depend on the model you're using, and may need to be
 // determined by experimentation.
-constexpr int kTensorArenaSize = 10 * 1024;
+constexpr int kTensorArenaSize = 65 * 1024;
 uint8_t tensor_arena[kTensorArenaSize];
 int8_t feature_buffer[kFeatureElementCount];
 int8_t* model_input_buffer = nullptr;
@@ -121,7 +121,7 @@ void setup() {
                                                  feature_buffer);
   feature_provider = &static_feature_provider;
 
-  static RecognizeCommands static_recognizer(error_reporter);
+  static RecognizeCommands static_recognizer(error_reporter, 2000, 70, 2000);
   recognizer = &static_recognizer;
 
   previous_time = 0;

@@ -19,6 +19,6 @@ const char* kCategoryLabels[kCategoryCount] = {
     "silence",
     "unknown",
     "licht",
-    "party",
     "aus",
+    "party",
 };
