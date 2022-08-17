@@ -7,9 +7,9 @@ This is a boiled down version of the [Custom Dataset Notebook](https://colab.res
 * __[[Keras]-Preprocess-Functional](https://github.com/Ben-Karr/KeywordDetectionTinyML/blob/master/%5BKeras%5D-Preprocess-Functional.ipynb):__ 
 Uses keras.utils.Squence to build a dataset and keras Functional API to build a model. It allows easy adjustment of the dataloading process including augmentation, rapid model development and transfer learning. Most of the functionality is kept as in the [Tensorflow example for speech commands](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/examples/speech_commands) (in particular: [input_data.py](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/speech_commands/input_data.py), [models.py](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/speech_commands/models.py), [train.py](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/speech_commands/train.py)) but avoids TF1 style / graphs / sessions.
 
-    __Note:__ When using transfer learning you should use a model that is bigger than the `tiny_conv` model, because the number of parameters that are trained and carried over to be fine tuned is very small, so very little improvement is expected
+    __Note:__ When using transfer learning you should use a model that is bigger than the `tiny_conv` model, because the number of parameters that are trained and carried over to be fine tuned is very small, so very little improvement is expected.
 
-* __[[Keras]KeywordDataset_Demo]():__ Demos the usage of [KeywordDataset]() as a module.
+* __[[Keras]KeywordDataset_Demo]():__ Demo of the usage of [KeywordDataset]() as a module.
 
 ## Data Sources:
 * [Speech Commands](https://storage.googleapis.com/download.tensorflow.org/data/speech_commands_v0.02.tar.gz): Collection of 1s .wav files of different keywords.
