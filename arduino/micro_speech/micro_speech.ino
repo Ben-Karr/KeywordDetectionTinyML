@@ -121,7 +121,7 @@ void setup() {
                                                  feature_buffer);
   feature_provider = &static_feature_provider;
 
-  static RecognizeCommands static_recognizer(error_reporter, 2000, 70, 2000);
+  static RecognizeCommands static_recognizer(error_reporter, 2000, 70);
   recognizer = &static_recognizer;
 
   previous_time = 0;
